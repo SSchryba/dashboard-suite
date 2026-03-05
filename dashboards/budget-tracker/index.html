@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker — Capital Projects</title>
+  <link rel="stylesheet" href="../../shared/css/design-system.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="dashboard-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">PM</div>
+      <span class="sidebar-logo-text">Capital Projects</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a href="../../index.html" class="sidebar-item">🏠 Dashboard Home</a>
+      <div class="sidebar-section-label">Dashboards</div>
+      <a href="../kpi-overview/index.html" class="sidebar-item">📊 KPI Overview</a>
+      <a href="../project-portfolio/index.html" class="sidebar-item">📁 Project Portfolio</a>
+      <a href="../schedule-milestones/index.html" class="sidebar-item">📅 Schedule &amp; Milestones</a>
+      <a href="../budget-tracker/index.html" class="sidebar-item active">💰 Budget Tracker</a>
+      <a href="../construction-progress/index.html" class="sidebar-item">🏗️ Construction Progress</a>
+      <a href="../facility-systems/index.html" class="sidebar-item">⚙️ Facility Systems</a>
+      <div class="sidebar-section-label">Templates</div>
+      <a href="../../templates/blank.html" class="sidebar-item">📄 Blank Template</a>
+    </nav>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="btn btn-ghost btn-sm" id="sidebar-toggle">☰</button>
+      <div>
+        <div class="topbar-title">Budget Tracker</div>
+        <div class="topbar-subtitle">Cost performance, variance analysis &amp; spend curves</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="text-xs text-muted font-mono" id="last-updated"></span>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()">↓ Export</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1 class="page-title">Budget Tracker</h1>
+      <p class="page-subtitle">Portfolio-wide cost performance — YTD 2026</p>
+    </div>
+
+    <!-- Budget KPI Cards -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-card-icon blue">💼</div>
+        <div>
+          <div class="card-title">Approved Budget</div>
+          <div class="card-value">$912M</div>
+          <div class="card-delta neutral">All active projects</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon yellow">💰</div>
+        <div>
+          <div class="card-title">Committed to Date</div>
+          <div class="card-value">$847M</div>
+          <div class="card-delta neutral">92.9% of approved</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon green">✅</div>
+        <div>
+          <div class="card-title">Actual Spent</div>
+          <div class="card-value">$581M</div>
+          <div class="card-delta positive">63.7% of committed</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon red">📉</div>
+        <div>
+          <div class="card-title">Cost Variance</div>
+          <div class="card-value">-$7.2M</div>
+          <div class="card-delta negative">1.2% over plan</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- S-Curve + Cost Breakdown -->
+    <div class="grid grid-2 mb-6">
+      <div class="card col-span-2">
+        <div class="card-header">
+          <span class="card-title">Portfolio S-Curve — Planned vs. Actual Cumulative Spend</span>
+          <span class="badge badge-blue">Cumulative $M</span>
+        </div>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chart-scurve"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-3 mb-6">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Spend by Cost Category</span></div>
+        <div class="chart-container" style="height:240px">
+          <canvas id="chart-cost-category"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Monthly Burn Rate ($M)</span></div>
+        <div class="chart-container" style="height:240px">
+          <canvas id="chart-burn-rate"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Contingency Usage</span></div>
+        <div class="chart-container" style="height:240px">
+          <canvas id="chart-contingency"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Budget Variance Table -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Project Budget Variance Summary</span>
+        <button class="btn btn-ghost btn-sm" id="export-variance">↓ CSV</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table" id="variance-table">
+          <thead>
+            <tr>
+              <th>Project</th>
+              <th>Approved Budget</th>
+              <th>Committed</th>
+              <th>Actual Spent</th>
+              <th>Remaining</th>
+              <th>Variance</th>
+              <th>CPI</th>
+              <th>Contingency Used</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="variance-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../shared/js/dashboard-utils.js"></script>
+<script>
+const BUDGET_DATA = [
+  { name: 'EUV Bay Expansion',       approved: 145, committed: 148, spent: 98,  contingency: 8.5, contingencyUsed: 6.2 },
+  { name: 'Veldhoven Cleanroom P2',  approved: 88,  committed: 87,  spent: 44,  contingency: 5.0, contingencyUsed: 0.8 },
+  { name: 'HMS Research Tower P3',   approved: 120, committed: 119, spent: 82,  contingency: 7.0, contingencyUsed: 2.1 },
+  { name: 'Med School Research Wing',approved: 55,  committed: 57,  spent: 52,  contingency: 3.0, contingencyUsed: 2.9 },
+  { name: 'BSL-3 Lab Renovation',    approved: 32,  committed: 32,  spent: 18,  contingency: 2.0, contingencyUsed: 0.4 },
+  { name: 'Cytiva BioProcess Fac.',  approved: 78,  committed: 76,  spent: 31,  contingency: 5.0, contingencyUsed: 0.2 },
+  { name: 'Pall Corp Filtration Exp',approved: 41,  committed: 41,  spent: 28,  contingency: 2.5, contingencyUsed: 1.1 },
+  { name: 'Proton Therapy Vault',    approved: 67,  committed: 69,  spent: 48,  contingency: 4.0, contingencyUsed: 3.8 },
+  { name: 'Oncology Infusion Center',approved: 29,  committed: 28,  spent: 11,  contingency: 1.8, contingencyUsed: 0.1 },
+  { name: 'Campus Energy Center',    approved: 48,  committed: 50,  spent: 22,  contingency: 3.0, contingencyUsed: 2.2 },
+];
+
+const months = DateUtils.lastNMonths(12);
+const planned = [18,38,62,89,122,158,198,242,290,342,398,458];
+const actual  = [16,35,59,88,126,161,194,238,287,339,396,—].map((v,i) => i < 9 ? v : null);
+
+// S-Curve
+ChartFactory.line('chart-scurve', months, [
+  { label: 'Planned Cumulative', data: planned, color: COLORS.blue },
+  { label: 'Actual Cumulative',  data: actual,  color: COLORS.green, fill: true }
+], { yFormat: 'currency' });
+
+// Cost Category
+ChartFactory.doughnut('chart-cost-category',
+  ['Construction','Equipment','Design/Eng','Commissioning','Contingency','Soft Costs'],
+  [38, 28, 14, 8, 7, 5],
+  COLORS.palette,
+  { format: 'percent', legendPosition: 'bottom' }
+);
+
+// Burn Rate
+const burnRateMonths = DateUtils.lastNMonths(8);
+ChartFactory.bar('chart-burn-rate', burnRateMonths, [
+  { label: 'Planned', data: [42,44,48,52,50,55,58,54], color: COLORS.blueLight.replace('0.15','0.6') },
+  { label: 'Actual',  data: [39,42,47,55,52,53,56,51], color: COLORS.blue }
+], { yFormat: 'currency', stacked: false });
+
+// Contingency
+ChartFactory.horizontalBar('chart-contingency',
+  BUDGET_DATA.slice(0,6).map(p => p.name.substring(0,20)),
+  BUDGET_DATA.slice(0,6).map(p => Math.round((p.contingencyUsed / p.contingency) * 100)),
+  BUDGET_DATA.slice(0,6).map(p => {
+    const r = p.contingencyUsed / p.contingency;
+    return r > 0.8 ? COLORS.red : r > 0.5 ? COLORS.yellow : COLORS.green;
+  }),
+  { yFormat: 'percent' }
+);
+
+// Variance Table
+const tbody = document.getElementById('variance-tbody');
+tbody.innerHTML = BUDGET_DATA.map(p => {
+  const variance = p.committed - p.approved;
+  const cpi = (p.approved / p.committed).toFixed(2);
+  const remaining = p.approved - p.spent;
+  const contPct = Math.round((p.contingencyUsed / p.contingency) * 100);
+  const varClass = variance > 0 ? 'text-danger' : 'text-success';
+  const cpiClass = parseFloat(cpi) < 0.95 ? 'text-danger' : parseFloat(cpi) > 1.02 ? 'text-success' : 'text-muted';
+  const statusColor = variance > 2 ? 'red' : variance > 0 ? 'yellow' : 'green';
+  return `<tr>
+    <td class="font-semibold">${p.name}</td>
+    <td class="font-mono">$${p.approved}M</td>
+    <td class="font-mono">$${p.committed}M</td>
+    <td class="font-mono">$${p.spent}M</td>
+    <td class="font-mono">$${remaining.toFixed(0)}M</td>
+    <td class="font-mono ${varClass}">${variance >= 0 ? '+' : ''}$${variance.toFixed(1)}M</td>
+    <td class="font-mono ${cpiClass}">${cpi}</td>
+    <td>${renderProgress(contPct, contPct > 80 ? 'red' : contPct > 50 ? 'yellow' : 'green')}</td>
+    <td>${badge(variance > 2 ? 'Over Budget' : variance > 0 ? 'Watch' : 'On Budget', statusColor)}</td>
+  </tr>`;
+}).join('');
+
+document.getElementById('export-variance').addEventListener('click', () => {
+  exportCSV(
+    ['Project','Approved','Committed','Spent','Remaining','Variance','CPI'],
+    BUDGET_DATA.map(p => [p.name, p.approved+'M', p.committed+'M', p.spent+'M',
+      (p.approved-p.spent).toFixed(0)+'M', (p.committed-p.approved).toFixed(1)+'M',
+      (p.approved/p.committed).toFixed(2)]),
+    'budget-variance.csv'
+  );
+});
+
+document.getElementById('last-updated').textContent = 'Updated: ' + Format.date(DateUtils.today());
+</script>
+</body>
+</html>

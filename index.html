@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capital Projects Dashboard Suite</title>
+  <link rel="stylesheet" href="shared/css/design-system.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .hero {
+      background: linear-gradient(135deg, rgba(47,129,247,0.08) 0%, rgba(163,113,247,0.08) 100%);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-10) var(--space-8);
+      margin-bottom: var(--space-8);
+      text-align: center;
+    }
+    .hero-title { font-size: var(--text-4xl); font-weight: var(--font-bold); background: linear-gradient(135deg, #e6edf3, #58a6ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { font-size: var(--text-lg); color: var(--color-text-secondary); margin-top: var(--space-3); max-width: 600px; margin-left: auto; margin-right: auto; }
+    .dashboard-card { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); text-decoration: none; display: flex; flex-direction: column; gap: var(--space-3); transition: all var(--transition-normal); cursor: pointer; }
+    .dashboard-card:hover { border-color: var(--color-accent-primary); box-shadow: var(--shadow-glow-blue); transform: translateY(-2px); }
+    .dashboard-card-icon { font-size: 2rem; width: 56px; height: 56px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; }
+    .dashboard-card-title { font-size: var(--text-lg); font-weight: var(--font-semibold); color: var(--color-text-primary); }
+    .dashboard-card-desc { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; }
+    .dashboard-card-tags { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .arch-section { background: var(--color-bg-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-6); margin-bottom: var(--space-6); }
+    .arch-tree { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.8; white-space: pre; overflow-x: auto; }
+    .arch-tree .dir  { color: var(--color-accent-primary); }
+    .arch-tree .file { color: var(--color-text-primary); }
+    .arch-tree .note { color: var(--color-text-muted); }
+  </style>
+</head>
+<body style="background:var(--color-bg-base);min-height:100vh;padding:var(--space-8);max-width:1200px;margin:0 auto">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div style="font-size:3rem;margin-bottom:var(--space-4)">📊</div>
+    <h1 class="hero-title">Capital Projects Dashboard Suite</h1>
+    <p class="hero-sub">A complete HTML data dashboard architecture for capital project management — zero dependencies, pure HTML/CSS/JS, fully customizable.</p>
+    <div class="flex gap-3 justify-center mt-4 flex-wrap">
+      <span class="badge badge-blue">6 Dashboards</span>
+      <span class="badge badge-green">2 Templates</span>
+      <span class="badge badge-purple">Chart.js Powered</span>
+      <span class="badge badge-gray">No Build Step</span>
+      <span class="badge badge-yellow">Dark Theme</span>
+    </div>
+  </div>
+
+  <!-- Dashboard Cards -->
+  <h2 class="text-xl font-semibold mb-4">Dashboards</h2>
+  <div class="grid grid-3 mb-8">
+
+    <a href="dashboards/kpi-overview/index.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(47,129,247,0.15)">📊</div>
+      <div class="dashboard-card-title">KPI Overview</div>
+      <div class="dashboard-card-desc">Portfolio-wide performance indicators: on-schedule rate, budget variance, SPI, change orders, and at-risk project summary.</div>
+      <div class="dashboard-card-tags">
+        <span class="badge badge-blue">KPIs</span>
+        <span class="badge badge-gray">Portfolio</span>
+        <span class="badge badge-green">Charts</span>
+      </div>
+    </a>
+
+    <a href="dashboards/project-portfolio/index.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(63,185,80,0.15)">📁</div>
+      <div class="dashboard-card-title">Project Portfolio</div>
+      <div class="dashboard-card-desc">Searchable, filterable project register with status, budget, schedule, and progress tracking across all active capital projects.</div>
+      <div class="dashboard-card-tags">
+        <span class="badge badge-green">Table</span>
+        <span class="badge badge-gray">Filter</span>
+        <span class="badge badge-blue">CSV Export</span>
+      </div>
+    </a>
+
+    <a href="dashboards/schedule-milestones/index.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(210,153,34,0.15)">📅</div>
+      <div class="dashboard-card-title">Schedule &amp; Milestones</div>
+      <div class="dashboard-card-desc">HTML Gantt chart, upcoming milestone tracker with countdown, and SPI bar chart across all projects.</div>
+      <div class="dashboard-card-tags">
+        <span class="badge badge-yellow">Gantt</span>
+        <span class="badge badge-blue">Milestones</span>
+        <span class="badge badge-gray">SPI</span>
+      </div>
+    </a>
+
+    <a href="dashboards/budget-tracker/index.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(163,113,247,0.15)">💰</div>
+      <div class="dashboard-card-title">Budget Tracker</div>
+      <div class="dashboard-card-desc">S-curve spend analysis, cost variance table, CPI tracking, contingency usage, and monthly burn rate charts.</div>
+      <div class="dashboard-card-tags">
+        <span class="badge badge-purple">S-Curve</span>
+        <span class="badge badge-yellow">Variance</span>
+        <span class="badge badge-blue">CPI</span>
+      </div>
+    </a>
+
+    <a href="dashboards/construction-progress/index.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(255,166,87,0.15)">🏗️</div>
+      <div class="dashboard-card-title">Construction Progress</div>
+      <div class="dashboard-card-desc">Per-project construction phase completion, weekly progress vs. plan, trade workforce tracking, and inspection log.</div>
+      <div class="dashboard-card-tags">
+        <span class="badge badge-yellow">Phases</span>
+        <span class="badge badge-green">Inspections</span>
+        <span class="badge badge-gray">Workforce</span>
+      </div>
+    </a>
+
+    <a href="dashboards/facility-systems/index.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(57,211,83,0.15)">⚙️</div>
+      <div class="dashboard-card-title">Facility Systems</div>
+      <div class="dashboard-card-desc">Live-simulated MEP/cleanroom system monitoring: HVAC, humidity, pressure, utilities, particle counts, and commissioning checklist.</div>
+      <div class="dashboard-card-tags">
+        <span class="badge badge-green">Live Sim</span>
+        <span class="badge badge-blue">MEP</span>
+        <span class="badge badge-purple">Cleanroom</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Templates -->
+  <h2 class="text-xl font-semibold mb-4">Templates</h2>
+  <div class="grid grid-2 mb-8">
+    <a href="templates/blank.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(139,148,158,0.15)">📄</div>
+      <div class="dashboard-card-title">Blank Dashboard Template</div>
+      <div class="dashboard-card-desc">Fully wired shell with sidebar, topbar, KPI cards, two charts, and a data table. Start here for any new dashboard.</div>
+      <div class="dashboard-card-tags"><span class="badge badge-gray">Starter</span></div>
+    </a>
+    <a href="templates/data-entry.html" class="dashboard-card">
+      <div class="dashboard-card-icon" style="background:rgba(139,148,158,0.15)">✏️</div>
+      <div class="dashboard-card-title">Data Entry Template</div>
+      <div class="dashboard-card-desc">Form-based template for entering project data that persists to localStorage and renders live into charts and tables.</div>
+      <div class="dashboard-card-tags"><span class="badge badge-gray">Forms</span><span class="badge badge-blue">localStorage</span></div>
+    </a>
+  </div>
+
+  <!-- Architecture -->
+  <div class="arch-section">
+    <h2 class="text-xl font-semibold mb-4">Repository Architecture</h2>
+    <div class="arch-tree"><span class="dir">dashboard-repo/</span>
+├── <span class="file">index.html</span>                         <span class="note">← Landing page (you are here)</span>
+│
+├── <span class="dir">shared/</span>                            <span class="note">← Shared assets used by all dashboards</span>
+│   ├── <span class="dir">css/</span>
+│   │   └── <span class="file">design-system.css</span>          <span class="note">← CSS variables, layout, components</span>
+│   ├── <span class="dir">js/</span>
+│   │   └── <span class="file">dashboard-utils.js</span>         <span class="note">← ChartFactory, Format, TableBuilder, etc.</span>
+│   └── <span class="dir">components/</span>
+│       └── <span class="file">shell.html</span>                 <span class="note">← Sidebar + topbar HTML snippet</span>
+│
+├── <span class="dir">dashboards/</span>                        <span class="note">← One folder per dashboard</span>
+│   ├── <span class="dir">kpi-overview/</span>
+│   │   └── <span class="file">index.html</span>
+│   ├── <span class="dir">project-portfolio/</span>
+│   │   └── <span class="file">index.html</span>
+│   ├── <span class="dir">schedule-milestones/</span>
+│   │   └── <span class="file">index.html</span>
+│   ├── <span class="dir">budget-tracker/</span>
+│   │   └── <span class="file">index.html</span>
+│   ├── <span class="dir">construction-progress/</span>
+│   │   └── <span class="file">index.html</span>
+│   └── <span class="dir">facility-systems/</span>
+│       └── <span class="file">index.html</span>
+│
+├── <span class="dir">templates/</span>                         <span class="note">← Starter templates for new dashboards</span>
+│   ├── <span class="file">blank.html</span>
+│   └── <span class="file">data-entry.html</span>
+│
+├── <span class="dir">assets/</span>
+│   ├── <span class="dir">icons/</span>
+│   └── <span class="dir">fonts/</span>
+│
+└── <span class="dir">docs/</span>
+    ├── <span class="file">README.md</span>
+    ├── <span class="file">ARCHITECTURE.md</span>
+    └── <span class="file">HOW-TO-USE.md</span></div>
+  </div>
+
+  <!-- Quick Start -->
+  <div class="arch-section">
+    <h2 class="text-xl font-semibold mb-3">Quick Start — Create a New Dashboard</h2>
+    <p class="text-sm text-muted mb-4">Three steps to spin up a new dashboard from the blank template:</p>
+    <div class="arch-tree"><span class="note"># 1. Copy the blank template</span>
+cp templates/blank.html dashboards/my-new-dashboard/index.html
+
+<span class="note"># 2. Update the paths in the new file (two lines to change)</span>
+<span class="note">#    href="../../shared/css/design-system.css"</span>
+<span class="note">#    src="../../shared/js/dashboard-utils.js"</span>
+
+<span class="note"># 3. Open in browser — no build step required</span>
+open dashboards/my-new-dashboard/index.html</div>
+  </div>
+
+  <div class="text-center text-xs text-muted mt-8 pb-8">
+    Capital Projects Dashboard Suite · Built with Chart.js · No framework, no build step, no dependencies
+  </div>
+
+</body>
+</html>

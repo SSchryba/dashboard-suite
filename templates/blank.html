@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blank Dashboard — Capital Projects</title>
+
+  <!-- Design System -->
+  <link rel="stylesheet" href="../shared/css/design-system.css">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="dashboard-shell">
+
+  <!-- ── Sidebar + Topbar (shared component) ── -->
+  <!-- Copy content from shared/components/shell.html here -->
+  <!-- Or use a build tool / server-side include -->
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">PM</div>
+      <span class="sidebar-logo-text">Capital Projects</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Dashboards</div>
+      <a href="../dashboards/kpi-overview/index.html" class="sidebar-item">KPI Overview</a>
+      <a href="../dashboards/project-portfolio/index.html" class="sidebar-item">Project Portfolio</a>
+      <a href="../dashboards/schedule-milestones/index.html" class="sidebar-item">Schedule &amp; Milestones</a>
+      <a href="../dashboards/budget-tracker/index.html" class="sidebar-item">Budget Tracker</a>
+      <a href="../dashboards/construction-progress/index.html" class="sidebar-item">Construction Progress</a>
+      <a href="../dashboards/facility-systems/index.html" class="sidebar-item">Facility Systems</a>
+      <div class="sidebar-section-label">Templates</div>
+      <a href="blank.html" class="sidebar-item active">Blank Template</a>
+      <a href="data-entry.html" class="sidebar-item">Data Entry Template</a>
+    </nav>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="btn btn-ghost btn-sm" id="sidebar-toggle">☰</button>
+      <div>
+        <div class="topbar-title">My Dashboard</div>
+        <div class="topbar-subtitle">Replace this subtitle</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="text-xs text-muted font-mono" id="last-updated"></span>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()">Export</button>
+    </div>
+  </header>
+
+  <!-- ── Main Content ── -->
+  <main class="main-content">
+
+    <!-- Page Header -->
+    <div class="page-header flex items-center justify-between">
+      <div>
+        <h1 class="page-title">Dashboard Title</h1>
+        <p class="page-subtitle">Description of what this dashboard tracks</p>
+      </div>
+      <div class="flex gap-2">
+        <select class="form-control" style="width:auto" id="filter-period">
+          <option>Last 30 Days</option>
+          <option>Last Quarter</option>
+          <option>YTD</option>
+          <option>All Time</option>
+        </select>
+        <button class="btn btn-primary btn-sm">+ Add Data</button>
+      </div>
+    </div>
+
+    <!-- ── KPI Stat Row ── -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-card-icon blue">📊</div>
+        <div>
+          <div class="card-title">Metric One</div>
+          <div class="card-value">—</div>
+          <div class="card-delta neutral">No data yet</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon green">✅</div>
+        <div>
+          <div class="card-title">Metric Two</div>
+          <div class="card-value">—</div>
+          <div class="card-delta neutral">No data yet</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon yellow">⚠️</div>
+        <div>
+          <div class="card-title">Metric Three</div>
+          <div class="card-value">—</div>
+          <div class="card-delta neutral">No data yet</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon purple">🔮</div>
+        <div>
+          <div class="card-title">Metric Four</div>
+          <div class="card-value">—</div>
+          <div class="card-delta neutral">No data yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Charts Row ── -->
+    <div class="grid grid-2 mb-6">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Chart One</span>
+          <span class="badge badge-blue">Line</span>
+        </div>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chart-one"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Chart Two</span>
+          <span class="badge badge-green">Bar</span>
+        </div>
+        <div class="chart-container" style="height:260px">
+          <canvas id="chart-two"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Data Table ── -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Data Table</span>
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV(['Col A','Col B','Col C'], tableData, 'export.csv')">↓ CSV</button>
+      </div>
+      <div id="main-table"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Dashboard Utilities -->
+<script src="../shared/js/dashboard-utils.js"></script>
+<script>
+  // ── Sample Data ──────────────────────────────────────────────
+  const tableData = [
+    ['Row 1 A', 'Row 1 B', 'Row 1 C'],
+    ['Row 2 A', 'Row 2 B', 'Row 2 C'],
+    ['Row 3 A', 'Row 3 B', 'Row 3 C'],
+  ];
+
+  const months = DateUtils.lastNMonths(6);
+
+  // ── Render Charts ────────────────────────────────────────────
+  ChartFactory.line('chart-one', months, [
+    { label: 'Series A', data: [12, 19, 15, 25, 22, 30], color: COLORS.blue, fill: true }
+  ]);
+
+  ChartFactory.bar('chart-two', months, [
+    { label: 'Series B', data: [8, 14, 11, 18, 16, 24], color: COLORS.green }
+  ]);
+
+  // ── Render Table ─────────────────────────────────────────────
+  TableBuilder.render('main-table',
+    ['Column A', 'Column B', 'Column C'],
+    tableData
+  );
+
+  // ── Update Timestamp ─────────────────────────────────────────
+  document.getElementById('last-updated').textContent =
+    'Updated: ' + Format.date(DateUtils.today());
+</script>
+</body>
+</html>

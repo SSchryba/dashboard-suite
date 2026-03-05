@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Facility Systems — Capital Projects</title>
+  <link rel="stylesheet" href="../../shared/css/design-system.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .system-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3); margin-bottom: var(--space-6); }
+    .system-card { background: var(--color-bg-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
+    .system-card.online  { border-left: 3px solid var(--color-accent-secondary); }
+    .system-card.warning { border-left: 3px solid var(--color-accent-warning); }
+    .system-card.offline { border-left: 3px solid var(--color-accent-danger); }
+    .system-icon { font-size: 1.5rem; }
+    .system-name { font-size: var(--text-sm); font-weight: var(--font-semibold); }
+    .system-value { font-size: var(--text-xl); font-weight: var(--font-bold); font-family: var(--font-mono); }
+    .system-label { font-size: var(--text-xs); color: var(--color-text-secondary); }
+    .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+    .pulse.green  { background: var(--color-accent-secondary); box-shadow: 0 0 6px var(--color-accent-secondary); animation: pulse 2s infinite; }
+    .pulse.yellow { background: var(--color-accent-warning); }
+    .pulse.red    { background: var(--color-accent-danger); }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  </style>
+</head>
+<body>
+<div class="dashboard-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">PM</div>
+      <span class="sidebar-logo-text">Capital Projects</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a href="../../index.html" class="sidebar-item">🏠 Dashboard Home</a>
+      <div class="sidebar-section-label">Dashboards</div>
+      <a href="../kpi-overview/index.html" class="sidebar-item">📊 KPI Overview</a>
+      <a href="../project-portfolio/index.html" class="sidebar-item">📁 Project Portfolio</a>
+      <a href="../schedule-milestones/index.html" class="sidebar-item">📅 Schedule &amp; Milestones</a>
+      <a href="../budget-tracker/index.html" class="sidebar-item">💰 Budget Tracker</a>
+      <a href="../construction-progress/index.html" class="sidebar-item">🏗️ Construction Progress</a>
+      <a href="../facility-systems/index.html" class="sidebar-item active">⚙️ Facility Systems</a>
+      <div class="sidebar-section-label">Templates</div>
+      <a href="../../templates/blank.html" class="sidebar-item">📄 Blank Template</a>
+    </nav>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="btn btn-ghost btn-sm" id="sidebar-toggle">☰</button>
+      <div>
+        <div class="topbar-title">Facility Systems</div>
+        <div class="topbar-subtitle">MEP, cleanroom, utilities &amp; commissioning status</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="text-xs text-muted font-mono" id="last-updated"></span>
+      <span class="badge badge-green"><span class="pulse green"></span>Live Simulation</span>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1 class="page-title">Facility Systems Monitor</h1>
+      <p class="page-subtitle">EUV Bay Expansion — Fab 7 · Cleanroom ISO Class 4 / 5 / 6 Zones</p>
+    </div>
+
+    <!-- System Status Cards -->
+    <div class="system-grid">
+      <div class="system-card online">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">❄️</span>
+          <span class="badge badge-green"><span class="pulse green"></span>Online</span>
+        </div>
+        <div>
+          <div class="system-name">HVAC — Air Handling</div>
+          <div class="system-value" id="sys-temp">68.2°F</div>
+          <div class="system-label">Supply Air Temp · Setpoint: 68°F</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill green" style="width:94%"></div></div>
+      </div>
+      <div class="system-card online">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">💧</span>
+          <span class="badge badge-green"><span class="pulse green"></span>Online</span>
+        </div>
+        <div>
+          <div class="system-name">Humidity Control</div>
+          <div class="system-value" id="sys-rh">45.1%</div>
+          <div class="system-label">Relative Humidity · Setpoint: 45%</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill blue" style="width:45%"></div></div>
+      </div>
+      <div class="system-card warning">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">🌬️</span>
+          <span class="badge badge-yellow"><span class="pulse yellow"></span>Warning</span>
+        </div>
+        <div>
+          <div class="system-name">Cleanroom Pressure</div>
+          <div class="system-value" id="sys-pressure">+0.042"</div>
+          <div class="system-label">Differential Pressure · Setpoint: +0.05"</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill yellow" style="width:84%"></div></div>
+      </div>
+      <div class="system-card online">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">⚡</span>
+          <span class="badge badge-green"><span class="pulse green"></span>Online</span>
+        </div>
+        <div>
+          <div class="system-name">Electrical — Main Bus</div>
+          <div class="system-value">4,160V</div>
+          <div class="system-label">Primary Distribution · 99.98% uptime</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill green" style="width:100%"></div></div>
+      </div>
+      <div class="system-card online">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">🔥</span>
+          <span class="badge badge-green"><span class="pulse green"></span>Online</span>
+        </div>
+        <div>
+          <div class="system-name">Process Cooling Water</div>
+          <div class="system-value">62°F</div>
+          <div class="system-label">Supply Temp · Flow: 840 GPM</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill blue" style="width:88%"></div></div>
+      </div>
+      <div class="system-card online">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">🧪</span>
+          <span class="badge badge-green"><span class="pulse green"></span>Online</span>
+        </div>
+        <div>
+          <div class="system-name">Ultra-Pure Water</div>
+          <div class="system-value">18.2 MΩ</div>
+          <div class="system-label">Resistivity · Flow: 120 LPM</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill green" style="width:100%"></div></div>
+      </div>
+      <div class="system-card online">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">🔩</span>
+          <span class="badge badge-green"><span class="pulse green"></span>Online</span>
+        </div>
+        <div>
+          <div class="system-name">Compressed Dry Air</div>
+          <div class="system-value">100 PSI</div>
+          <div class="system-label">Header Pressure · Dew Point: -40°F</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill green" style="width:96%"></div></div>
+      </div>
+      <div class="system-card offline">
+        <div class="flex items-center justify-between">
+          <span class="system-icon">🛡️</span>
+          <span class="badge badge-red"><span class="pulse red"></span>Offline</span>
+        </div>
+        <div>
+          <div class="system-name">Fire Suppression</div>
+          <div class="system-value">—</div>
+          <div class="system-label">Not yet commissioned · ETA: Apr 2026</div>
+        </div>
+        <div class="progress-track"><div class="progress-fill red" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <!-- Trend Charts -->
+    <div class="grid grid-2 mb-6">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Temperature &amp; Humidity — 24h Trend</span></div>
+        <div class="chart-container" style="height:260px"><canvas id="chart-env-trend"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Cleanroom Particle Count (0.5µm)</span></div>
+        <div class="chart-container" style="height:260px"><canvas id="chart-particles"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Commissioning Checklist -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Commissioning Checklist — Systems Status</span>
+        <span class="badge badge-blue">6 / 14 Complete</span>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>System</th><th>Cx Phase</th><th>Pre-Functional</th><th>Functional Test</th><th>Owner Acceptance</th><th>Status</th><th>Target Date</th></tr></thead>
+        <tbody>
+          <tr><td>HVAC — AHU-01</td><td>Phase 2</td><td>${badge('Complete','green')}</td><td>${badge('Complete','green')}</td><td>${badge('Complete','green')}</td><td>${badge('Complete','blue')}</td><td class="text-muted">Feb 2026</td></tr>
+          <tr><td>Process Cooling</td><td>Phase 2</td><td>${badge('Complete','green')}</td><td>${badge('Complete','green')}</td><td>${badge('In Progress','blue')}</td><td>${badge('In Progress','blue')}</td><td class="text-muted">Mar 2026</td></tr>
+          <tr><td>Ultra-Pure Water</td><td>Phase 2</td><td>${badge('Complete','green')}</td><td>${badge('In Progress','blue')}</td><td>${badge('Pending','gray')}</td><td>${badge('In Progress','blue')}</td><td class="text-muted">Apr 2026</td></tr>
+          <tr><td>Electrical Distribution</td><td>Phase 1</td><td>${badge('Complete','green')}</td><td>${badge('Complete','green')}</td><td>${badge('Complete','green')}</td><td>${badge('Complete','blue')}</td><td class="text-muted">Jan 2026</td></tr>
+          <tr><td>Cleanroom Envelope</td><td>Phase 3</td><td>${badge('In Progress','blue')}</td><td>${badge('Pending','gray')}</td><td>${badge('Pending','gray')}</td><td>${badge('In Progress','blue')}</td><td class="text-muted">Jun 2026</td></tr>
+          <tr><td>Fire Suppression</td><td>Phase 3</td><td>${badge('Not Started','gray')}</td><td>${badge('Not Started','gray')}</td><td>${badge('Not Started','gray')}</td><td>${badge('Not Started','gray')}</td><td class="text-muted">Aug 2026</td></tr>
+          <tr><td>BAS / Controls</td><td>Phase 3</td><td>${badge('In Progress','blue')}</td><td>${badge('Pending','gray')}</td><td>${badge('Pending','gray')}</td><td>${badge('In Progress','blue')}</td><td class="text-muted">Jul 2026</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../shared/js/dashboard-utils.js"></script>
+<script>
+// 24-hour temperature/humidity trend
+const hours = Array.from({length:24}, (_,i) => `${String(i).padStart(2,'0')}:00`);
+const tempData = hours.map((_,i) => +(67.8 + Math.sin(i/4)*0.6 + (Math.random()-0.5)*0.2).toFixed(1));
+const rhData   = hours.map((_,i) => +(44.5 + Math.cos(i/5)*1.2 + (Math.random()-0.5)*0.3).toFixed(1));
+
+ChartFactory.line('chart-env-trend', hours, [
+  { label: 'Temp (°F)', data: tempData, color: COLORS.orange },
+  { label: 'RH (%)',    data: rhData,   color: COLORS.blue }
+], { beginAtZero: false });
+
+// Particle count trend
+const particleHours = hours.filter((_,i) => i % 2 === 0);
+const iso4 = particleHours.map(() => Math.round(800 + Math.random()*400));
+const iso5 = particleHours.map(() => Math.round(8000 + Math.random()*3000));
+ChartFactory.line('chart-particles', particleHours, [
+  { label: 'ISO 4 Zone (≤10,000/m³)', data: iso4, color: COLORS.green },
+  { label: 'ISO 5 Zone (≤100,000/m³)',data: iso5, color: COLORS.blue }
+], { beginAtZero: false });
+
+// Live simulation — update values every 3 seconds
+setInterval(() => {
+  document.getElementById('sys-temp').textContent     = (68 + (Math.random()-0.5)*0.8).toFixed(1) + '°F';
+  document.getElementById('sys-rh').textContent       = (45 + (Math.random()-0.5)*2).toFixed(1) + '%';
+  document.getElementById('sys-pressure').textContent = '+' + (0.042 + (Math.random()-0.5)*0.006).toFixed(3) + '"';
+}, 3000);
+
+document.getElementById('last-updated').textContent = 'Updated: ' + Format.date(DateUtils.today());
+</script>
+</body>
+</html>

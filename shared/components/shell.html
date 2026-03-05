@@ -1,0 +1,106 @@
+<!--
+  DASHBOARD SHELL COMPONENT
+  Copy this into any dashboard page and update the active nav item.
+  Replace {{PAGE_TITLE}} and {{PAGE_SUBTITLE}} with your page values.
+-->
+
+<!-- ══════════════════════════════════════════
+     SIDEBAR
+══════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-icon">PM</div>
+    <span class="sidebar-logo-text">Capital Projects</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="sidebar-section-label">Overview</div>
+    <a href="../index.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3A1.5 1.5 0 0115 10.5v3A1.5 1.5 0 0113.5 15h-3A1.5 1.5 0 019 13.5v-3z"/>
+      </svg>
+      Dashboard Home
+    </a>
+
+    <div class="sidebar-section-label">Dashboards</div>
+    <a href="../dashboards/kpi-overview/index.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 1a7 7 0 100 14A7 7 0 008 1zm0 1.5a5.5 5.5 0 110 11 5.5 5.5 0 010-11zM8 4a.75.75 0 01.75.75v3.5l2.25 1.3a.75.75 0 01-.75 1.3L7.5 9.4V4.75A.75.75 0 018 4z"/>
+      </svg>
+      KPI Overview
+    </a>
+    <a href="../dashboards/project-portfolio/index.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M1.75 0A1.75 1.75 0 000 1.75v12.5C0 15.216.784 16 1.75 16h12.5A1.75 1.75 0 0016 14.25V1.75A1.75 1.75 0 0014.25 0H1.75zM1.5 1.75a.25.25 0 01.25-.25h12.5a.25.25 0 01.25.25v12.5a.25.25 0 01-.25.25H1.75a.25.25 0 01-.25-.25V1.75zM11.75 3a.75.75 0 000 1.5h1a.75.75 0 000-1.5h-1zm-6.5 4A.75.75 0 006 8.5h1a.75.75 0 000-1.5H5.25zm3.25 0a.75.75 0 000 1.5h1a.75.75 0 000-1.5H8.5z"/>
+      </svg>
+      Project Portfolio
+    </a>
+    <a href="../dashboards/schedule-milestones/index.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M4.75 0a.75.75 0 01.75.75V2h5V.75a.75.75 0 011.5 0V2h1.25c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0113.25 16H2.75A1.75 1.75 0 011 14.25V3.75C1 2.784 1.784 2 2.75 2H4V.75A.75.75 0 014.75 0zm0 3.5h-2a.25.25 0 00-.25.25V6h11V3.75a.25.25 0 00-.25-.25h-2V4.25a.75.75 0 01-1.5 0V3.5h-5v.75a.75.75 0 01-1.5 0V3.5zM2.5 7.5v6.75c0 .138.112.25.25.25h10.5a.25.25 0 00.25-.25V7.5H2.5z"/>
+      </svg>
+      Schedule & Milestones
+    </a>
+    <a href="../dashboards/budget-tracker/index.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0a8 8 0 100 16A8 8 0 008 0zM1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zm7-3.25v.4c.8.2 1.4.8 1.4 1.6 0 .9-.7 1.5-1.4 1.6v.4a.75.75 0 01-1.5 0v-.4c-.7-.1-1.4-.7-1.4-1.6a.75.75 0 011.5 0c0 .2.2.35.4.35h.5c.2 0 .4-.15.4-.35s-.2-.35-.4-.35h-.5c-.9 0-1.65-.7-1.65-1.6 0-.8.6-1.4 1.4-1.6v-.4a.75.75 0 011.5 0z"/>
+      </svg>
+      Budget Tracker
+    </a>
+    <a href="../dashboards/construction-progress/index.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M2.5 1.75v11.5c0 .138.112.25.25.25h3.17a.75.75 0 010 1.5H2.75A1.75 1.75 0 011 13.25V1.75C1 .784 1.784 0 2.75 0h7.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v8.836a.75.75 0 01-1.5 0V4.664a.25.25 0 00-.073-.177L10.513 1.573A.25.25 0 0010.336 1.5H2.75a.25.25 0 00-.25.25z"/>
+      </svg>
+      Construction Progress
+    </a>
+    <a href="../dashboards/facility-systems/index.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M7.429 1.525a6.593 6.593 0 011.142 0c.036.003.108.036.137.146l.289 1.105c.147.56.55.967.997 1.189.174.086.341.183.501.29.417.278.97.423 1.53.27l1.102-.303c.11-.03.175.016.195.046.219.31.41.641.573.989.163.345.288.704.373 1.073.014.063-.012.13-.075.16l-.98.477c-.501.244-.82.651-.918 1.083a4.84 4.84 0 010 1.156c.098.432.417.84.918 1.083l.98.477c.063.03.089.097.075.16a6.587 6.587 0 01-.946 2.062c-.02.03-.085.076-.195.046l-1.102-.303c-.56-.153-1.113-.008-1.53.27-.16.107-.327.204-.501.29-.447.222-.85.629-.997 1.189l-.289 1.105c-.029.11-.101.143-.137.146a6.588 6.588 0 01-1.142 0c-.036-.003-.108-.036-.137-.146l-.289-1.105c-.147-.56-.55-.967-.997-1.189a4.843 4.843 0 01-.501-.29c-.417-.278-.97-.423-1.53-.27l-1.102.303c-.11.03-.175-.016-.195-.046a6.587 6.587 0 01-.946-2.062c-.014-.063.012-.13.075-.16l.98-.477c.501-.244.82-.651.918-1.083a4.843 4.843 0 010-1.156c-.098-.432-.417-.84-.918-1.083l-.98-.477c-.063-.03-.089-.097-.075-.16a6.588 6.588 0 01.946-2.062c.02-.03.085-.076.195-.046l1.102.303c.56.153 1.113.008 1.53-.27.16-.107.327-.204.501-.29.447-.222.85-.629.997-1.189l.289-1.105c.029-.11.101-.143.137-.146zM8 11a3 3 0 100-6 3 3 0 000 6z"/>
+      </svg>
+      Facility Systems
+    </a>
+
+    <div class="sidebar-section-label">Templates</div>
+    <a href="../templates/blank.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0113.25 16h-9.5A1.75 1.75 0 012 14.25V1.75zm1.75-.25a.25.25 0 00-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 00.25-.25V6h-2.75A1.75 1.75 0 019 4.25V1.5H3.75zm6.75.56v2.19c0 .138.112.25.25.25h2.19L10.5 2.06z"/>
+      </svg>
+      Blank Template
+    </a>
+    <a href="../templates/data-entry.html" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M11.013 1.427a1.75 1.75 0 012.474 0l1.086 1.086a1.75 1.75 0 010 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 01-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61zm1.414 1.06a.25.25 0 00-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 000-.354l-1.086-1.086zM11.189 6.25L9.75 4.81l-6.286 6.287a.25.25 0 00-.064.108l-.558 1.953 1.953-.558a.249.249 0 00.108-.064l6.286-6.286z"/>
+      </svg>
+      Data Entry Template
+    </a>
+
+    <div class="sidebar-section-label">Docs</div>
+    <a href="../docs/README.md" class="sidebar-item">
+      <svg class="sidebar-item-icon" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M0 1.75A.75.75 0 01.75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0111.006 1h4.245a.75.75 0 01.75.75v10.5a.75.75 0 01-.75.75h-4.507a2.25 2.25 0 00-1.591.659l-.622.621a.75.75 0 01-1.06 0l-.622-.621A2.25 2.25 0 005.258 13H.75a.75.75 0 01-.75-.75V1.75z"/>
+      </svg>
+      Documentation
+    </a>
+  </nav>
+</aside>
+
+<!-- ══════════════════════════════════════════
+     TOPBAR
+══════════════════════════════════════════ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="btn btn-ghost btn-sm" id="sidebar-toggle" title="Toggle sidebar">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M1 2.75A.75.75 0 011.75 2h12.5a.75.75 0 010 1.5H1.75A.75.75 0 011 2.75zm0 5A.75.75 0 011.75 7h12.5a.75.75 0 010 1.5H1.75A.75.75 0 011 7.75zM1.75 12a.75.75 0 000 1.5h12.5a.75.75 0 000-1.5H1.75z"/>
+      </svg>
+    </button>
+    <div>
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-subtitle" id="page-subtitle">Capital Projects Management</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span class="text-xs text-muted font-mono" id="last-updated">Updated: —</span>
+    <button class="btn btn-secondary btn-sm" onclick="window.print()">Export</button>
+  </div>
+</header>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schedule &amp; Milestones — Capital Projects</title>
+  <link rel="stylesheet" href="../../shared/css/design-system.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* Gantt Bar Styles */
+    .gantt-wrap { overflow-x: auto; }
+    .gantt-table { width: 100%; border-collapse: collapse; font-size: var(--text-xs); min-width: 900px; }
+    .gantt-table th { padding: var(--space-2) var(--space-3); background: var(--color-bg-elevated); color: var(--color-text-secondary); font-weight: var(--font-semibold); text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--color-border); white-space: nowrap; }
+    .gantt-table td { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border-subtle); vertical-align: middle; }
+    .gantt-table tr:hover td { background: var(--color-bg-elevated); }
+    .gantt-bar-cell { min-width: 380px; }
+    .gantt-track { position: relative; height: 20px; background: var(--color-bg-overlay); border-radius: var(--radius-full); overflow: hidden; }
+    .gantt-bar { position: absolute; height: 100%; border-radius: var(--radius-full); display: flex; align-items: center; padding: 0 6px; font-size: 10px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; transition: opacity 0.2s; }
+    .gantt-bar:hover { opacity: 0.85; }
+    .gantt-today { position: absolute; top: 0; bottom: 0; width: 2px; background: var(--color-accent-danger); z-index: 2; }
+    .milestone-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; margin-right: 6px; flex-shrink: 0; }
+    .upcoming-list { display: flex; flex-direction: column; gap: var(--space-3); }
+    .upcoming-item { display: flex; align-items: flex-start; gap: var(--space-3); padding: var(--space-3); background: var(--color-bg-elevated); border-radius: var(--radius-md); border-left: 3px solid; }
+    .upcoming-item.green  { border-color: var(--color-accent-secondary); }
+    .upcoming-item.yellow { border-color: var(--color-accent-warning); }
+    .upcoming-item.red    { border-color: var(--color-accent-danger); }
+    .upcoming-item.blue   { border-color: var(--color-accent-primary); }
+  </style>
+</head>
+<body>
+<div class="dashboard-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">PM</div>
+      <span class="sidebar-logo-text">Capital Projects</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a href="../../index.html" class="sidebar-item">🏠 Dashboard Home</a>
+      <div class="sidebar-section-label">Dashboards</div>
+      <a href="../kpi-overview/index.html" class="sidebar-item">📊 KPI Overview</a>
+      <a href="../project-portfolio/index.html" class="sidebar-item">📁 Project Portfolio</a>
+      <a href="../schedule-milestones/index.html" class="sidebar-item active">📅 Schedule &amp; Milestones</a>
+      <a href="../budget-tracker/index.html" class="sidebar-item">💰 Budget Tracker</a>
+      <a href="../construction-progress/index.html" class="sidebar-item">🏗️ Construction Progress</a>
+      <a href="../facility-systems/index.html" class="sidebar-item">⚙️ Facility Systems</a>
+      <div class="sidebar-section-label">Templates</div>
+      <a href="../../templates/blank.html" class="sidebar-item">📄 Blank Template</a>
+    </nav>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="btn btn-ghost btn-sm" id="sidebar-toggle">☰</button>
+      <div>
+        <div class="topbar-title">Schedule &amp; Milestones</div>
+        <div class="topbar-subtitle">Gantt timeline and upcoming milestone tracker</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="text-xs text-muted font-mono" id="last-updated"></span>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()">↓ Export</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1 class="page-title">Schedule &amp; Milestones</h1>
+      <p class="page-subtitle">Project timelines, milestone tracking, and schedule performance</p>
+    </div>
+
+    <!-- Schedule KPIs -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-card-icon green">📅</div>
+        <div><div class="card-title">On Schedule</div><div class="card-value">9 / 14</div><div class="card-delta positive">64% on-time rate</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon yellow">⏰</div>
+        <div><div class="card-title">Milestones Due (30d)</div><div class="card-value">7</div><div class="card-delta neutral">3 at risk</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon red">🚨</div>
+        <div><div class="card-title">Overdue Milestones</div><div class="card-value">2</div><div class="card-delta negative">Action required</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon blue">📊</div>
+        <div><div class="card-title">Avg. SPI</div><div class="card-value">0.97</div><div class="card-delta neutral">Slightly behind plan</div></div>
+      </div>
+    </div>
+
+    <!-- Gantt Chart -->
+    <div class="card mb-6">
+      <div class="card-header">
+        <span class="card-title">Project Timeline — 2024 to 2028</span>
+        <div class="flex gap-2">
+          <span class="badge badge-green">On Track</span>
+          <span class="badge badge-yellow">At Risk</span>
+          <span class="badge badge-red">Delayed</span>
+        </div>
+      </div>
+      <div class="gantt-wrap">
+        <table class="gantt-table">
+          <thead>
+            <tr>
+              <th style="width:200px">Project</th>
+              <th style="width:80px">Status</th>
+              <th style="width:60px">% Done</th>
+              <th class="gantt-bar-cell">
+                <div style="display:flex;justify-content:space-between;padding:0 4px">
+                  <span>2024</span><span>2025</span><span>2026</span><span>2027</span><span>2028</span>
+                </div>
+              </th>
+              <th>Forecast End</th>
+            </tr>
+          </thead>
+          <tbody id="gantt-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Upcoming Milestones + SPI Chart -->
+    <div class="grid grid-2 mb-6">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Upcoming Milestones (Next 60 Days)</span></div>
+        <div class="upcoming-list" id="milestone-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Schedule Performance Index (SPI) by Project</span></div>
+        <div class="chart-container" style="height:300px">
+          <canvas id="chart-spi-bar"></canvas>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../shared/js/dashboard-utils.js"></script>
+<script>
+// ── Gantt Data ───────────────────────────────────────────────
+// Dates as fractions of the 2024-2028 range (0 = Jan 2024, 1 = Dec 2028)
+const GANTT_RANGE_START = new Date('2024-01-01').getTime();
+const GANTT_RANGE_END   = new Date('2028-12-31').getTime();
+const GANTT_TOTAL       = GANTT_RANGE_END - GANTT_RANGE_START;
+
+function dateToFrac(dateStr) {
+  return (new Date(dateStr).getTime() - GANTT_RANGE_START) / GANTT_TOTAL * 100;
+}
+
+const GANTT_PROJECTS = [
+  { name: 'EUV Bay Expansion',        status: 'At Risk',   pct: 62, start: '2024-03-01', end: '2026-09-30', forecastEnd: '2026-11-15' },
+  { name: 'Veldhoven Cleanroom P2',   status: 'On Track',  pct: 48, start: '2024-08-01', end: '2026-12-15', forecastEnd: '2026-12-15' },
+  { name: 'HMS Research Tower P3',    status: 'On Track',  pct: 71, start: '2023-06-01', end: '2026-06-30', forecastEnd: '2026-07-15' },
+  { name: 'Med School Research Wing', status: 'Critical',  pct: 88, start: '2023-01-15', end: '2026-04-30', forecastEnd: '2026-05-30' },
+  { name: 'BSL-3 Lab Renovation',     status: 'At Risk',   pct: 55, start: '2024-11-01', end: '2026-08-15', forecastEnd: '2026-10-01' },
+  { name: 'Cytiva BioProcess Fac.',   status: 'On Track',  pct: 38, start: '2025-01-01', end: '2027-03-01', forecastEnd: '2027-03-01' },
+  { name: 'Pall Corp Filtration',     status: 'On Track',  pct: 67, start: '2024-05-01', end: '2026-05-31', forecastEnd: '2026-05-31' },
+  { name: 'Proton Therapy Vault',     status: 'Delayed',   pct: 70, start: '2023-10-01', end: '2026-07-31', forecastEnd: '2026-10-31' },
+  { name: 'Oncology Infusion Center', status: 'On Track',  pct: 34, start: '2025-03-01', end: '2027-01-15', forecastEnd: '2027-01-15' },
+  { name: 'Campus Energy Center',     status: 'At Risk',   pct: 44, start: '2024-07-01', end: '2026-11-30', forecastEnd: '2027-02-28' },
+  { name: 'ASML Training Facility',   status: 'On Track',  pct: 28, start: '2025-06-01', end: '2027-06-01', forecastEnd: '2027-06-01' },
+  { name: 'Next-Gen Vivarium',        status: 'Planning',  pct: 3,  start: '2026-01-01', end: '2028-06-30', forecastEnd: '2028-06-30' },
+];
+
+const STATUS_BAR_COLOR = { 'On Track': '#3fb950', 'At Risk': '#d29922', 'Delayed': '#ffa657', 'Critical': '#f85149', 'Planning': '#a371f7' };
+
+const todayFrac = dateToFrac(DateUtils.today());
+
+const ganttTbody = document.getElementById('gantt-tbody');
+ganttTbody.innerHTML = GANTT_PROJECTS.map(p => {
+  const left  = Math.max(0, dateToFrac(p.start));
+  const right = Math.min(100, dateToFrac(p.end));
+  const width = right - left;
+  const color = STATUS_BAR_COLOR[p.status] || '#8b949e';
+  return `<tr>
+    <td class="font-semibold text-xs truncate" style="max-width:200px" title="${p.name}">${p.name}</td>
+    <td>${statusBadge(p.status)}</td>
+    <td class="font-mono text-xs">${p.pct}%</td>
+    <td class="gantt-bar-cell">
+      <div class="gantt-track">
+        <div class="gantt-today" style="left:${todayFrac}%"></div>
+        <div class="gantt-bar" style="left:${left}%;width:${width}%;background:${color}">
+          ${width > 8 ? p.name.split(' ')[0] : ''}
+        </div>
+      </div>
+    </td>
+    <td class="text-muted text-xs">${Format.shortDate(p.forecastEnd)}</td>
+  </tr>`;
+}).join('');
+
+// ── Upcoming Milestones ──────────────────────────────────────
+const MILESTONES = [
+  { project: 'HMS Research Tower P3',    name: 'Substantial Completion',   date: '2026-03-15', color: 'green' },
+  { project: 'EUV Bay Expansion',        name: 'Cleanroom Envelope Close', date: '2026-03-22', color: 'yellow' },
+  { project: 'Pall Corp Filtration',     name: 'Equipment Commissioning',  date: '2026-03-28', color: 'blue' },
+  { project: 'Med School Research Wing', name: 'Final Inspection',         date: '2026-04-05', color: 'red' },
+  { project: 'BSL-3 Lab Renovation',     name: 'HVAC Validation',          date: '2026-04-12', color: 'yellow' },
+  { project: 'Campus Energy Center',     name: 'Switchgear Installation',  date: '2026-04-20', color: 'yellow' },
+  { project: 'Veldhoven Cleanroom P2',   name: 'Structural Steel Complete',date: '2026-04-30', color: 'green' },
+];
+
+const milestoneList = document.getElementById('milestone-list');
+milestoneList.innerHTML = MILESTONES.map(m => {
+  const days = DateUtils.daysUntil(m.date);
+  const urgency = days < 0 ? '🔴 OVERDUE' : days < 14 ? `⚠️ ${days}d away` : `✅ ${days}d away`;
+  return `<div class="upcoming-item ${m.color}">
+    <div style="flex:1">
+      <div class="text-xs font-semibold text-primary">${m.name}</div>
+      <div class="text-xs text-muted mt-1">${m.project}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div class="text-xs font-mono">${Format.date(m.date)}</div>
+      <div class="text-xs mt-1">${urgency}</div>
+    </div>
+  </div>`;
+}).join('');
+
+// ── SPI Bar Chart ────────────────────────────────────────────
+const spiData = [0.97, 1.01, 0.99, 0.94, 0.96, 1.02, 1.00, 0.92, 1.03, 0.95, 1.01, 0.98];
+const spiLabels = GANTT_PROJECTS.map(p => p.name.split(' ')[0].substring(0,10));
+ChartFactory.bar('chart-spi-bar', spiLabels, [
+  { label: 'SPI', data: spiData, colors: spiData.map(v => v >= 1 ? COLORS.green : v >= 0.95 ? COLORS.yellow : COLORS.red) }
+], { chartOptions: { scales: { y: { min: 0.85, max: 1.1, grid: { color: '#21262d' }, ticks: { callback: v => v.toFixed(2) } }, x: { grid: { display: false } } }, plugins: { legend: { display: false } } } });
+
+document.getElementById('last-updated').textContent = 'Updated: ' + Format.date(DateUtils.today());
+</script>
+</body>
+</html>

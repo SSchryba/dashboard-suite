@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Portfolio — Capital Projects</title>
+  <link rel="stylesheet" href="../../shared/css/design-system.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    .portfolio-table th { cursor: pointer; user-select: none; }
+    .portfolio-table th:hover { color: var(--color-text-primary); }
+    .progress-cell { min-width: 140px; }
+    .filter-bar { display: flex; gap: var(--space-3); flex-wrap: wrap; align-items: center; margin-bottom: var(--space-5); }
+  </style>
+</head>
+<body>
+<div class="dashboard-shell">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">PM</div>
+      <span class="sidebar-logo-text">Capital Projects</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a href="../../index.html" class="sidebar-item">🏠 Dashboard Home</a>
+      <div class="sidebar-section-label">Dashboards</div>
+      <a href="../kpi-overview/index.html" class="sidebar-item">📊 KPI Overview</a>
+      <a href="../project-portfolio/index.html" class="sidebar-item active">📁 Project Portfolio</a>
+      <a href="../schedule-milestones/index.html" class="sidebar-item">📅 Schedule &amp; Milestones</a>
+      <a href="../budget-tracker/index.html" class="sidebar-item">💰 Budget Tracker</a>
+      <a href="../construction-progress/index.html" class="sidebar-item">🏗️ Construction Progress</a>
+      <a href="../facility-systems/index.html" class="sidebar-item">⚙️ Facility Systems</a>
+      <div class="sidebar-section-label">Templates</div>
+      <a href="../../templates/blank.html" class="sidebar-item">📄 Blank Template</a>
+    </nav>
+  </aside>
+
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="btn btn-ghost btn-sm" id="sidebar-toggle">☰</button>
+      <div>
+        <div class="topbar-title">Project Portfolio</div>
+        <div class="topbar-subtitle">All active and pipeline capital projects</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="text-xs text-muted font-mono" id="last-updated"></span>
+      <button class="btn btn-secondary btn-sm" id="export-btn">↓ CSV</button>
+      <button class="btn btn-primary btn-sm">+ New Project</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1 class="page-title">Project Portfolio</h1>
+      <p class="page-subtitle">14 active projects · $847M total committed value</p>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-card-icon blue">📁</div>
+        <div><div class="card-title">Total Projects</div><div class="card-value">14</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon green">✅</div>
+        <div><div class="card-title">On Track</div><div class="card-value">9</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon yellow">⚠️</div>
+        <div><div class="card-title">At Risk / Delayed</div><div class="card-value">4</div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon purple">🔮</div>
+        <div><div class="card-title">In Planning</div><div class="card-value">1</div></div>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-3 mb-6">
+      <div class="card">
+        <div class="card-header"><span class="card-title">By Status</span></div>
+        <div class="chart-container" style="height:200px"><canvas id="chart-by-status"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">By Sector</span></div>
+        <div class="chart-container" style="height:200px"><canvas id="chart-by-sector"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Budget Distribution ($M)</span></div>
+        <div class="chart-container" style="height:200px"><canvas id="chart-budget-dist"></canvas></div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <input type="text" class="form-control" id="search-input" placeholder="Search projects..." style="width:220px">
+      <select class="form-control" id="filter-status" style="width:auto">
+        <option value="">All Statuses</option>
+        <option>On Track</option><option>At Risk</option><option>Delayed</option>
+        <option>Planning</option><option>Complete</option>
+      </select>
+      <select class="form-control" id="filter-sector" style="width:auto">
+        <option value="">All Sectors</option>
+        <option>Advanced Mfg</option><option>Higher Ed</option>
+        <option>Life Sciences</option><option>Healthcare</option>
+      </select>
+    </div>
+
+    <!-- Portfolio Table -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div style="overflow-x:auto">
+        <table class="data-table portfolio-table" id="portfolio-table">
+          <thead>
+            <tr>
+              <th>Project Name</th>
+              <th>Sector</th>
+              <th>Status</th>
+              <th>Budget</th>
+              <th>Spent</th>
+              <th>% Complete</th>
+              <th>Start</th>
+              <th>Forecast Complete</th>
+              <th>PM</th>
+            </tr>
+          </thead>
+          <tbody id="portfolio-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../shared/js/dashboard-utils.js"></script>
+<script>
+const PROJECTS = [
+  { name: 'EUV Bay Expansion — Fab 7',        sector: 'Advanced Mfg',  status: 'At Risk',   budget: 145_000_000, spent: 98_000_000,  pct: 62, start: '2024-03-01', end: '2026-09-30', pm: 'S. Schryba' },
+  { name: 'Veldhoven Cleanroom Phase 2',       sector: 'Advanced Mfg',  status: 'On Track',  budget: 88_000_000,  spent: 44_000_000,  pct: 48, start: '2024-08-01', end: '2026-12-15', pm: 'S. Schryba' },
+  { name: 'HMS Research Tower — Phase 3',      sector: 'Higher Ed',     status: 'On Track',  budget: 120_000_000, spent: 82_000_000,  pct: 71, start: '2023-06-01', end: '2026-06-30', pm: 'A. Patel' },
+  { name: 'Med School Research Wing',          sector: 'Higher Ed',     status: 'Critical',  budget: 55_000_000,  spent: 52_000_000,  pct: 88, start: '2023-01-15', end: '2026-04-30', pm: 'A. Patel' },
+  { name: 'BSL-3 Lab Renovation',              sector: 'Life Sciences', status: 'At Risk',   budget: 32_000_000,  spent: 18_000_000,  pct: 55, start: '2024-11-01', end: '2026-08-15', pm: 'J. Torres' },
+  { name: 'Cytiva BioProcess Facility',        sector: 'Life Sciences', status: 'On Track',  budget: 78_000_000,  spent: 31_000_000,  pct: 38, start: '2025-01-01', end: '2027-03-01', pm: 'S. Schryba' },
+  { name: 'Pall Corp Filtration Expansion',    sector: 'Life Sciences', status: 'On Track',  budget: 41_000_000,  spent: 28_000_000,  pct: 67, start: '2024-05-01', end: '2026-05-31', pm: 'M. Chen' },
+  { name: 'Harvard Quad Utility Upgrade',      sector: 'Higher Ed',     status: 'On Track',  budget: 18_000_000,  spent: 14_000_000,  pct: 79, start: '2024-09-01', end: '2026-03-31', pm: 'L. Kim' },
+  { name: 'Oncology Infusion Center',          sector: 'Healthcare',    status: 'On Track',  budget: 29_000_000,  spent: 11_000_000,  pct: 34, start: '2025-03-01', end: '2027-01-15', pm: 'R. Davis' },
+  { name: 'Proton Therapy Vault',              sector: 'Healthcare',    status: 'Delayed',   budget: 67_000_000,  spent: 48_000_000,  pct: 70, start: '2023-10-01', end: '2026-07-31', pm: 'R. Davis' },
+  { name: 'ASML Training Facility',            sector: 'Advanced Mfg',  status: 'On Track',  budget: 22_000_000,  spent: 8_000_000,   pct: 28, start: '2025-06-01', end: '2027-06-01', pm: 'S. Schryba' },
+  { name: 'Semiconductor Metrology Lab',       sector: 'Advanced Mfg',  status: 'On Track',  budget: 35_000_000,  spent: 19_000_000,  pct: 52, start: '2024-10-01', end: '2026-10-31', pm: 'T. Walsh' },
+  { name: 'Campus Energy Center',              sector: 'Higher Ed',     status: 'At Risk',   budget: 48_000_000,  spent: 22_000_000,  pct: 44, start: '2024-07-01', end: '2026-11-30', pm: 'L. Kim' },
+  { name: 'Next-Gen Vivarium',                 sector: 'Life Sciences', status: 'Planning',  budget: 69_000_000,  spent: 2_000_000,   pct: 3,  start: '2026-01-01', end: '2028-06-30', pm: 'J. Torres' },
+];
+
+function progressColor(pct) {
+  if (pct >= 75) return 'green';
+  if (pct >= 40) return 'blue';
+  return 'yellow';
+}
+
+function renderTable(data) {
+  const tbody = document.getElementById('portfolio-tbody');
+  tbody.innerHTML = data.map(p => `
+    <tr>
+      <td class="font-semibold truncate" style="max-width:220px" title="${p.name}">${p.name}</td>
+      <td><span class="badge badge-gray">${p.sector}</span></td>
+      <td>${statusBadge(p.status)}</td>
+      <td class="font-mono">${Format.currency(p.budget)}</td>
+      <td class="font-mono">${Format.currency(p.spent)}</td>
+      <td class="progress-cell">${renderProgress(p.pct, progressColor(p.pct))}</td>
+      <td class="text-muted">${Format.shortDate(p.start)}</td>
+      <td class="text-muted">${Format.shortDate(p.end)}</td>
+      <td>${p.pm}</td>
+    </tr>`).join('');
+}
+
+function filterProjects() {
+  const search = document.getElementById('search-input').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const sector = document.getElementById('filter-sector').value;
+  return PROJECTS.filter(p =>
+    (!search || p.name.toLowerCase().includes(search) || p.pm.toLowerCase().includes(search)) &&
+    (!status || p.status === status) &&
+    (!sector || p.sector === sector)
+  );
+}
+
+['search-input','filter-status','filter-sector'].forEach(id =>
+  document.getElementById(id).addEventListener('input', () => renderTable(filterProjects()))
+);
+
+// Charts
+ChartFactory.doughnut('chart-by-status',
+  ['On Track','At Risk','Delayed','Critical','Planning'],
+  [9, 2, 1, 1, 1],
+  [COLORS.green, COLORS.yellow, COLORS.orange, COLORS.red, COLORS.purple]
+);
+
+ChartFactory.doughnut('chart-by-sector',
+  ['Advanced Mfg','Higher Ed','Life Sciences','Healthcare'],
+  [5, 4, 4, 2],
+  [COLORS.blue, COLORS.green, COLORS.purple, COLORS.cyan]
+);
+
+const budgetByProject = PROJECTS.slice(0,8).map(p => ({ label: p.name.split('—')[0].trim().substring(0,22), val: Math.round(p.budget/1e6) }));
+ChartFactory.horizontalBar('chart-budget-dist',
+  budgetByProject.map(p => p.label),
+  budgetByProject.map(p => p.val),
+  COLORS.palette
+);
+
+document.getElementById('export-btn').addEventListener('click', () => {
+  exportCSV(
+    ['Project','Sector','Status','Budget','Spent','% Complete','Start','Forecast End','PM'],
+    PROJECTS.map(p => [p.name, p.sector, p.status, p.budget, p.spent, p.pct, p.start, p.end, p.pm]),
+    'project-portfolio.csv'
+  );
+});
+
+renderTable(PROJECTS);
+document.getElementById('last-updated').textContent = 'Updated: ' + Format.date(DateUtils.today());
+</script>
+</body>
+</html>

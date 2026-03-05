@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KPI Overview — Capital Projects</title>
+  <link rel="stylesheet" href="../../shared/css/design-system.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="dashboard-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">PM</div>
+      <span class="sidebar-logo-text">Capital Projects</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Overview</div>
+      <a href="../../index.html" class="sidebar-item">🏠 Dashboard Home</a>
+      <div class="sidebar-section-label">Dashboards</div>
+      <a href="../kpi-overview/index.html" class="sidebar-item active">📊 KPI Overview</a>
+      <a href="../project-portfolio/index.html" class="sidebar-item">📁 Project Portfolio</a>
+      <a href="../schedule-milestones/index.html" class="sidebar-item">📅 Schedule &amp; Milestones</a>
+      <a href="../budget-tracker/index.html" class="sidebar-item">💰 Budget Tracker</a>
+      <a href="../construction-progress/index.html" class="sidebar-item">🏗️ Construction Progress</a>
+      <a href="../facility-systems/index.html" class="sidebar-item">⚙️ Facility Systems</a>
+      <div class="sidebar-section-label">Templates</div>
+      <a href="../../templates/blank.html" class="sidebar-item">📄 Blank Template</a>
+    </nav>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="btn btn-ghost btn-sm" id="sidebar-toggle">☰</button>
+      <div>
+        <div class="topbar-title">KPI Overview</div>
+        <div class="topbar-subtitle">Portfolio-wide performance indicators</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span class="text-xs text-muted font-mono" id="last-updated"></span>
+      <select class="form-control" style="width:auto;font-size:0.75rem" id="period-filter">
+        <option>YTD 2026</option><option>Q1 2026</option><option>Q4 2025</option>
+      </select>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()">↓ Export</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1 class="page-title">Portfolio KPI Overview</h1>
+      <p class="page-subtitle">Real-time health metrics across all active capital projects</p>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-card-icon blue">📁</div>
+        <div>
+          <div class="card-title">Active Projects</div>
+          <div class="card-value">14</div>
+          <div class="card-delta positive">+2 this quarter</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon green">✅</div>
+        <div>
+          <div class="card-title">On-Schedule Rate</div>
+          <div class="card-value">78%</div>
+          <div class="card-delta positive">+4% vs last quarter</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon yellow">💰</div>
+        <div>
+          <div class="card-title">Total Committed</div>
+          <div class="card-value">$847M</div>
+          <div class="card-delta neutral">93% of approved budget</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon red">⚠️</div>
+        <div>
+          <div class="card-title">At-Risk Items</div>
+          <div class="card-value">3</div>
+          <div class="card-delta negative">+1 since last review</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second KPI Row -->
+    <div class="grid grid-4 mb-6">
+      <div class="stat-card">
+        <div class="stat-card-icon purple">🏗️</div>
+        <div>
+          <div class="card-title">Avg. Completion</div>
+          <div class="card-value">61%</div>
+          <div class="card-delta positive">+8% this month</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon blue">📋</div>
+        <div>
+          <div class="card-title">Open RFIs</div>
+          <div class="card-value">27</div>
+          <div class="card-delta negative">12 overdue</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon green">🔒</div>
+        <div>
+          <div class="card-title">Safety Incidents</div>
+          <div class="card-value">0</div>
+          <div class="card-delta positive">142 days incident-free</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon yellow">📐</div>
+        <div>
+          <div class="card-title">Change Orders</div>
+          <div class="card-value">18</div>
+          <div class="card-delta neutral">$4.2M total value</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="grid grid-2 mb-6">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Budget Spend vs. Plan (YTD)</span>
+          <span class="badge badge-blue">Monthly</span>
+        </div>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chart-budget-trend"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Schedule Performance Index</span>
+          <span class="badge badge-green">SPI</span>
+        </div>
+        <div class="chart-container" style="height:280px">
+          <canvas id="chart-spi"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="grid grid-3 mb-6">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Project Status Mix</span>
+        </div>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chart-status-mix"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Budget by Sector</span>
+        </div>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chart-sector-budget"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Change Order Trend</span>
+        </div>
+        <div class="chart-container" style="height:220px">
+          <canvas id="chart-co-trend"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Risk Summary Table -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">At-Risk Projects</span>
+        <button class="btn btn-ghost btn-sm">View All →</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Project</th><th>Sector</th><th>Risk Type</th><th>Schedule Impact</th><th>Budget Impact</th><th>Status</th><th>Owner</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="font-semibold">EUV Bay Expansion — Fab 7</td>
+            <td>Advanced Mfg</td>
+            <td><span class="badge badge-red">Schedule</span></td>
+            <td class="text-danger">+45 days</td>
+            <td class="text-warning">+$2.1M</td>
+            <td><span class="badge badge-yellow">At Risk</span></td>
+            <td>S. Schryba</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">BSL-3 Lab Renovation</td>
+            <td>Life Sciences</td>
+            <td><span class="badge badge-yellow">Permitting</span></td>
+            <td class="text-warning">+21 days</td>
+            <td class="text-muted">On Budget</td>
+            <td><span class="badge badge-yellow">At Risk</span></td>
+            <td>J. Torres</td>
+          </tr>
+          <tr>
+            <td class="font-semibold">Med School Research Wing</td>
+            <td>Higher Ed</td>
+            <td><span class="badge badge-red">Budget</span></td>
+            <td class="text-muted">On Schedule</td>
+            <td class="text-danger">+$890K</td>
+            <td><span class="badge badge-red">Critical</span></td>
+            <td>A. Patel</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script src="../../shared/js/dashboard-utils.js"></script>
+<script>
+  const months = DateUtils.lastNMonths(8);
+
+  // Budget Spend vs Plan
+  ChartFactory.line('chart-budget-trend', months, [
+    { label: 'Planned Spend', data: [62,71,85,98,115,130,148,162], color: COLORS.blue },
+    { label: 'Actual Spend',  data: [58,68,82,101,118,127,143,158], color: COLORS.green, fill: true }
+  ], { yFormat: 'currency' });
+
+  // SPI
+  ChartFactory.line('chart-spi', months, [
+    { label: 'SPI', data: [0.97,0.98,1.01,0.99,0.96,0.94,0.97,0.98], color: COLORS.purple }
+  ], { beginAtZero: false, chartOptions: { scales: { y: { min: 0.85, max: 1.1, grid: { color: '#21262d' }, ticks: { callback: v => v.toFixed(2) } }, x: { grid: { color: '#21262d' } } } } });
+
+  // Status Mix
+  ChartFactory.doughnut('chart-status-mix',
+    ['On Track','At Risk','Delayed','Complete','Planning'],
+    [7, 3, 1, 2, 1],
+    [COLORS.green, COLORS.yellow, COLORS.red, COLORS.blue, COLORS.purple]
+  );
+
+  // Sector Budget
+  ChartFactory.doughnut('chart-sector-budget',
+    ['Advanced Mfg','Higher Ed','Life Sciences','Healthcare','Gov/Infra'],
+    [340, 220, 145, 98, 44],
+    COLORS.palette,
+    { format: 'currency' }
+  );
+
+  // Change Order Trend
+  ChartFactory.bar('chart-co-trend', months, [
+    { label: 'Change Orders', data: [1,3,2,4,2,1,3,2], color: COLORS.orange }
+  ]);
+
+  document.getElementById('last-updated').textContent = 'Updated: ' + Format.date(DateUtils.today());
+</script>
+</body>
+</html>
